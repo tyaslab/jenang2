@@ -1,0 +1,6 @@
+public/media
+public/static
+vendor
+!.gitkeep
+*.sublime-*
+composer.lock

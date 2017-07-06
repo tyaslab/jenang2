@@ -1,0 +1,23 @@
+{
+    "description": "Yet Another PHP Framework",
+    "type": "project",
+    "keywords": ["symfony", "jenang", "jenang2"],
+    "authors": [
+        {
+            "name": "Aditya Darmawan",
+            "email": "addaraquthny@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "^3.3",
+        "symfony/http-kernel": "^3.3",
+        "symfony/event-dispatcher": "^3.3",
+        "symfony/routing": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/Core/",
+            "Module\\": "src/Module/"
+        }
+    }
+}
