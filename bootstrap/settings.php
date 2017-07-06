@@ -1,3 +1,0 @@
-<?php
-
-// settings goes here

@@ -1,9 +1,10 @@
 <?php
 
-namespace Core;
+namespace Jenang2\Event;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\Event;
+
 
 class RequestEvent extends Event {
     protected $request;

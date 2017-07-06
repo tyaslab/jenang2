@@ -7,6 +7,8 @@ First of all, make sure you have a worked composer installation.
 
     composer install
 
+Copy .env.dist to .env
+
 # How to run
 
 To run your app,

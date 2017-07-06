@@ -12,12 +12,15 @@
         "symfony/http-foundation": "^3.3",
         "symfony/http-kernel": "^3.3",
         "symfony/event-dispatcher": "^3.3",
-        "symfony/routing": "^3.3"
+        "symfony/routing": "^3.3",
+        "symfony/templating": "^3.3",
+        "illuminate/database": "^5.4",
+        "symfony/dotenv": "^3.3"
     },
     "autoload": {
         "psr-4": {
-            "Core\\": "src/Core/",
-            "Module\\": "src/Module/"
+            "Jenang2\\": "src/Jenang2/",
+            "App\\": "src/App/"
         }
     }
 }
