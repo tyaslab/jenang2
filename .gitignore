@@ -1,6 +1,7 @@
+!.gitkeep
 public/media
 public/static
 vendor
-!.gitkeep
+stashed
 *.sublime-*
 composer.lock
