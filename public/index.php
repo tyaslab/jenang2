@@ -23,14 +23,18 @@ $whoops = new Whoops\Run();
 $development_mode = getenv('DEVELOPMENT_MODE');
 
 if ($development_mode == 'debug') {
-    $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
+    // TODO: do you have better approach? :)
+    $handler = new \Jenang2\Handler\DebugHandler();
 } elseif ($development_mode == 'production') {
-    $handler = new \Jenang2\Handler\ControllerHandler();
-    $handler->exceptionController[Response::HTTP_NOT_FOUND] = new \Jenang2\Controller\NotFoundController($request);
-    $handler->exceptionController[Response::HTTP_INTERNAL_SERVER_ERROR] = new \Jenang2\Controller\ServerErrorController($request);
-
-    $whoops->pushHandler($handler);
+    $handler = new \Jenang2\Handler\ProductionHandler();
+    $exceptionControllers = array(
+        Response::HTTP_NOT_FOUND => new \Jenang2\Controller\NotFoundController($request),
+        Response::HTTP_INTERNAL_SERVER_ERROR => new \Jenang2\Controller\ServerErrorController($request)
+    );
+    $handler->exceptionController = $exceptionControllers;
 }
+
+$whoops->pushHandler($handler);
 
 // Set Whoops as the default error and exception handler used by PHP:
 $whoops->register();
@@ -60,8 +64,6 @@ if ($db_name) {
     // Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
     $capsule->bootEloquent();
 }
-
-throw new \Exception();
 
 // use Core\RequestEvent;
 

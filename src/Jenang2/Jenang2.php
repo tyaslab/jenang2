@@ -55,7 +55,7 @@ class Jenang2 implements HttpKernelInterface {
 
         } catch (ResourceNotFoundException $e) {
             // TODO: error handler
-            throw new \Jenang2\Exception\NotFoundException('Page not found');
+            throw new \Jenang2\Exception\NotFoundException('Page \'' . $request->getPathInfo() . '\' not found');
         }
 
         return $response;
