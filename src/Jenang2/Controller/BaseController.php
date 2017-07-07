@@ -5,11 +5,6 @@ namespace Jenang2\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Symfony\Component\Templating\PhpEngine;
-use Symfony\Component\Templating\TemplateNameParser;
-use Symfony\Component\Templating\Loader\FilesystemLoader;
-
-
 class BaseController {
     // protected $c;
     private $templates;
@@ -20,24 +15,33 @@ class BaseController {
     protected $session;
     protected $args = [];
 
+    protected $twig;
+
     protected $allowed_methods = ['GET', 'POST'];
+    protected $status_code = Response::HTTP_OK;
 
     public function __construct(Request $request, $args=[]) {
         $this->request = $request;
         $this->response = new Response();
         $this->args = $args;
+
+        $loader = new \Twig_Loader_Filesystem(ROOT_DIR . '/src/App/View');
+        $twig_cache_dir = false;
+
+        if (getenv('DEVELOPMENT_MODE') == 'production') {
+            $twig_cache_dir = ROOT_DIR . '/cache';
+        }
+
+        $this->twig = new \Twig_Environment($loader, array(
+            'cache' => $twig_cache_dir
+        ));
     }
 
-    public function render($template_path, $data=[], $layout=NULL) {
-        $loader = new FilesystemLoader(ROOT_DIR . '/src/App/View/%name%.php');
-        $templating = new PhpEngine(new TemplateNameParser(), $loader);
-        $content = $templating->render($template_path, $data);
-        if (!$layout) {
-            echo $content;
-        } else {
-            $data['pageContent'] = $content;
-            echo $templating->render($layout, $data);
-        }
+    public function render($template_path, $data=[]) {
+        $this->response = $this->response->setContent($this->twig->render($template_path . '.html', $data));
+        $this->response = $this->response->setStatusCode($this->status_code);
+
+        return $this->response;
     }
 
     protected function getContextData($args=[]) {

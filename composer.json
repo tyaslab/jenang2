@@ -13,9 +13,10 @@
         "symfony/http-kernel": "^3.3",
         "symfony/event-dispatcher": "^3.3",
         "symfony/routing": "^3.3",
-        "symfony/templating": "^3.3",
         "illuminate/database": "^5.4",
-        "symfony/dotenv": "^3.3"
+        "symfony/dotenv": "^3.3",
+        "twig/twig": "^2.4",
+        "filp/whoops": "^2.1"
     },
     "autoload": {
         "psr-4": {

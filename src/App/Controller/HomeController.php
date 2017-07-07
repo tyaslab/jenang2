@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
-use Jenang2\Controller\BaseController;
+use Jenang2\Controller\TemplateController;
 
-class HomeController extends BaseController {
+class HomeController extends TemplateController {
+    protected $template_name = 'home';
+
     public function get() {
-        return $this->response->setContent('Hola');
+        return $this->renderToResponse(['world' => 'dunya']);
     }
 }
