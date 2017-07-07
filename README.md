@@ -1,5 +1,5 @@
 # Introduction
-Jenang2 is Yet Another PHP Framework utilizing Symfony components.
+Jenang2 is Yet Another PHP Framework utilizing Symfony components and others.
 
 # How to use
 
@@ -16,3 +16,26 @@ If your app has database fill DB_NAME in .env file
 To run your app,
     
     php -S localhost:8080 -t public
+
+
+Or, if you use xampp and run from htdocs directory, you should change BASE_URL to fit yours.
+
+For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
+    
+    BASE_URL=/jenang2/public/
+
+
+# TODO
+
+Still incomplete, though.
+
+- Model layer
+- Forms and Validations (plan: adapt from Jenang 1)
+- Dependency Injector
+- CSRF
+- Session
+- Flash Message
+- Event Dispatcher a.k.a. Signal
+- Middleware
+- Cache
+- Unit Testing

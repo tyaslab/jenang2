@@ -39,7 +39,25 @@ class Jenang2 implements HttpKernelInterface {
         $matcher = new UrlMatcher($this->routes, $context);
 
         try {
-            $attributes = $matcher->match($request->getPathInfo());
+            $path_info = $request->getPathInfo();
+
+            $base_url = getenv('BASE_URL');
+
+            // remove trailing slash
+            if ($base_url[count($base_url) - 1] == '/') {
+                $base_url = substr($base_url, 0, count($base_url) - 2);
+            }
+
+            if ($path_info == $base_url) {
+                $path_info = '/';
+            } elseif ($base_url && substr($path_info, 0, count($base_url)) == $base_url) {
+                $path_info = substr($path_info, count($base_url));
+            }
+
+            // when path info returns none, it should be /
+            if ($path_info == '') $path_info = '/';
+
+            $attributes = $matcher->match($path_info);
             $controller = $attributes['controller'];
             unset($attributes['controller']);
             unset($attributes['_route']);  // I don't need this btw :)
