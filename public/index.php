@@ -17,6 +17,25 @@ $dotenv->load(ROOT_DIR . '/.env');
 
 $request = Request::createFromGlobals();
 
+// Mail Server
+// Create the Transport
+$transport = (new Swift_SmtpTransport('smtp.example.org', 25))
+  ->setUsername('your username')
+  ->setPassword('your password')
+;
+
+// Create the Mailer using your created Transport
+$mailer = new Swift_Mailer($transport);
+
+// Create a message
+$message = (new Swift_Message('Wonderful Subject'))
+  ->setFrom(['john@doe.com' => 'John Doe'])
+  ->setTo(['receiver@domain.org', 'other@domain.org' => 'A name'])
+  ->setBody('Here is the message itself');
+
+// Send the message
+// $result = $mailer->send($message);
+
 // defining Whoops
 $whoops = new Whoops\Run();
 
@@ -44,7 +63,7 @@ $db_name = getenv('DB_NAME');
 
 if ($db_name) {
     $db = [
-        'driver'    => 'mysql',
+        'driver'    => getenv('DB_DRIVER'),
         'host'      => $db_name,
         'database'  => getenv('DB_NAME'),  // your database name
         'username'  => getenv('DB_USERNAME'),  // your database username

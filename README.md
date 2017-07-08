@@ -29,7 +29,6 @@ For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
 
 Still incomplete, though.
 
-- Model layer
 - Forms and Validations (plan: adapt from Jenang 1)
 - Dependency Injector
 - CSRF
@@ -38,4 +37,3 @@ Still incomplete, though.
 - Event Dispatcher a.k.a. Signal
 - Middleware
 - Cache
-- Unit Testing
