@@ -12,9 +12,10 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
-// use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
-// use Jenang2\Event\RequestEvent;
+use Jenang2\Event\MiddlewareBeforeResponseEvent;
+use Jenang2\Event\MiddlewareAfterResponseEvent;
 
 use Jenang2\Controller\BaseController;
 
@@ -24,17 +25,16 @@ class Jenang2 implements HttpKernelInterface {
 
     public function __construct() {
         $this->routes = new RouteCollection();
-        // $this->dispatcher = new EventDispatcher();
+        $this->dispatcher = new EventDispatcher();
     }
 
     public function handle(Request $request, $type=HttpKernelInterface::MASTER_REQUEST, $catch=true) {
-        // $event = new RequestEvent();
-        // $event->setRequest($request);
-
-        // $this->dispatcher->dispatch('request', $event);
-
         $context = new RequestContext();
         $context->fromRequest($request);
+
+        $event = new MiddlewareBeforeResponseEvent();
+        $event->setRequest($request);
+        $this->dispatcher->dispatch('beforeResponse', $event);
 
         $matcher = new UrlMatcher($this->routes, $context);
 
@@ -73,11 +73,14 @@ class Jenang2 implements HttpKernelInterface {
                 // if a Closure
                 $response = call_user_func_array($controller, $attributes);
             }
-
         } catch (ResourceNotFoundException $e) {
-            // TODO: error handler
             throw new \Jenang2\Exception\NotFoundException('Page \'' . $request->getPathInfo() . '\' not found');
         }
+
+        $event = new MiddlewareAfterResponseEvent();
+        $event->setRequest($request);
+        $event->setResponse($response);
+        $this->dispatcher->dispatch('afterResponse', $event);
 
         return $response;
     }
@@ -100,11 +103,11 @@ class Jenang2 implements HttpKernelInterface {
 
     }
 
-    // public function on($event, $callback) {
-    //     $this->dispatcher->addListener($event, $callback);
-    // }
+    public function on($event, $callback) {
+        $this->dispatcher->addListener($event, $callback);
+    }
 
-    // public function fire($event) {
-    //     return $this->dispatcher->dispatch($event);
-    // }
+    public function fire($event) {
+        return $this->dispatcher->dispatch($event);
+    }
 }

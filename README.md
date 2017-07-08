@@ -30,10 +30,5 @@ For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
 Still incomplete, though.
 
 - Forms and Validations (plan: adapt from Jenang 1)
-- Dependency Injector
-- CSRF
-- Session
 - Flash Message
-- Event Dispatcher a.k.a. Signal
-- Middleware
 - Cache

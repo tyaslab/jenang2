@@ -4,16 +4,32 @@ require '../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Dotenv\Dotenv;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+use Jenang2\IoC\IoC;
+use Jenang2\Event\MiddlewareBeforeResponseEvent;
+use Jenang2\Event\MiddlewareAfterResponseEvent;
 
 define('ROOT_DIR', dirname(__DIR__));
+
+// session
+$session = new Session();
+
+if (!$session->isStarted()) {
+    $session->start();
+}
 
 // load .env file
 $dotenv = new Dotenv();
 $dotenv->load(ROOT_DIR . '/.env');
+
+// register session to ioc
+IoC::register('session', function() use ($session) {
+    return $session;
+});
 
 $request = Request::createFromGlobals();
 
@@ -90,12 +106,29 @@ $app = new \Jenang2\Jenang2();
 require '../bootstrap/urls.php';
 $app->map($urls);
 
-// $app->on('request', function(RequestEvent $event) {
-//     if ('/admin' == $event->getRequest()->getPathInfo()) {
-//         echo 'Access Denied!';
-//         exit;
-//     }
-// });
+require '../bootstrap/middlewares.php';
+$app->on('beforeResponse', function(MiddlewareBeforeResponseEvent $event) use ($middlewares) {
+    $request = $event->getRequest();
+
+    foreach ($middlewares as $middleware) {
+        $middleware_object = new $middleware();
+        if (method_exists($middleware_object, 'beforeResponse')) {
+            $middleware_object->beforeResponse($request);
+        }
+    }
+});
+
+$app->on('afterResponse', function(MiddlewareAfterResponseEvent $event) use ($middlewares) {
+    $request = $event->getRequest();
+    $response = $event->getResponse();
+
+    foreach ($middlewares as $middleware) {
+        $middleware_object = new $middleware();
+        if (method_exists($middleware_object, 'afterResponse')) {
+            $middleware_object->afterResponse($request, $response);
+        }
+    }
+});
 
 $response = $app->handle($request);
 $response->send();

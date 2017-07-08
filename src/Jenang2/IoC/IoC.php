@@ -7,7 +7,7 @@ namespace Jenang2\IoC;
 class IoC {
     protected static $registry = array();
 
-    public static function register($name, Closure $resolve) {
+    public static function register($name, \Closure $resolve) {
         static::$registry[$name] = $resolve;
     }
  

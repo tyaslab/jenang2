@@ -5,6 +5,8 @@ namespace Jenang2\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Jenang2\IoC\IoC;
+
 class BaseController {
     // protected $c;
     private $templates;
@@ -12,7 +14,6 @@ class BaseController {
     protected $request;
     protected $response;
     protected $user;
-    protected $session;
     protected $args = [];
 
     protected $twig;
@@ -24,6 +25,7 @@ class BaseController {
         $this->request = $request;
         $this->response = new Response();
         $this->args = $args;
+        $this->session = IoC::resolve('session');
 
         $loader = new \Twig_Loader_Filesystem(ROOT_DIR . '/src/App/View');
         $twig_cache_dir = false;
@@ -49,7 +51,8 @@ class BaseController {
             'controller' => $this,
             'request' => $this->request,
             'args' => $this->args,
-            'method' => $this->request->getMethod()
+            'method' => $this->request->getMethod(),
+            'session' => $this->session
         ];
 
         $data = array_merge($data, $args);
@@ -69,7 +72,7 @@ class BaseController {
         }
 
         if (!method_exists($that, $method_function))
-            throw new \Exception("Class method $method_function not implemented");
+            throw new \Jenang2\Exception\NotImplementedException("Class method $method_function not implemented");
 
         return call_user_func_array([$that, strtolower($method)], []);
     }
