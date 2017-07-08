@@ -29,7 +29,6 @@ For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
 
 Still incomplete, though.
 
-- Forms and Validations (ongoing)
 - Logger (plan: use Monolog)
 - Database Migration (plan: use Phinx)
 - Cache (for future)
