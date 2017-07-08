@@ -11,6 +11,7 @@ class ListController extends TemplateController {
     private $total_page = NULL;
     private $current_page = NULL;
     protected $object_list = NULL;
+    protected $page_param = 'page';
 
     protected function getPaginateBy() {
         return $this->paginate_by;
@@ -18,7 +19,7 @@ class ListController extends TemplateController {
 
     protected function getCurrentPage() {
         if ($this->current_page) return $this->current_page;
-        $current_page = $this->c->request->getParam('page', 1);
+        $current_page = $this->request->get($this->page_param, 1);
         $this->current_page = $current_page;
 
         return $current_page;
@@ -40,7 +41,7 @@ class ListController extends TemplateController {
 
         if ($total_page > 0 && $current_page > $total_page) {
             // TODO: redirect to first page
-            throw new \Slim\Exception\NotFoundException($this->request, $this->response);
+            throw new \Jenang2\Exception\NotFoundException('Page not found');
         }
 
         $paged = $collections->forPage($current_page, $per_page);

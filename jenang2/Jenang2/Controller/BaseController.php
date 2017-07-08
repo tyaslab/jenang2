@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Jenang2\IoC\IoC;
+use Jenang2\Flash\Flash;
 
 class BaseController {
     // protected $c;
@@ -17,6 +18,7 @@ class BaseController {
     protected $args = [];
 
     protected $twig;
+    protected $flash;
 
     protected $allowed_methods = ['GET', 'POST'];
     protected $status_code = Response::HTTP_OK;
@@ -27,16 +29,23 @@ class BaseController {
         $this->args = $args;
         $this->session = IoC::resolve('session');
 
-        $loader = new \Twig_Loader_Filesystem(ROOT_DIR . '/src/App/View');
+        $this->flash = new Flash();
+
+        $twig_dirs = IoC::resolve('template_dirs');
+        $loader = new \Twig_Loader_Filesystem($twig_dirs);
         $twig_cache_dir = false;
 
-        if (getenv('DEVELOPMENT_MODE') == 'production') {
-            $twig_cache_dir = ROOT_DIR . '/cache';
+        $development_mode = getenv('DEVELOPMENT_MODE');
+        if ($development_mode == 'production') {
+            $twig_cache_dir = APP_DIR . '/cache';
         }
 
         $this->twig = new \Twig_Environment($loader, array(
+            'debug' => $development_mode == 'debug',
             'cache' => $twig_cache_dir
         ));
+
+        $this->twig->addExtension(new \Twig_Extension_Debug());
     }
 
     public function render($template_path, $data=[]) {
@@ -52,6 +61,7 @@ class BaseController {
             'request' => $this->request,
             'args' => $this->args,
             'method' => $this->request->getMethod(),
+            'flash_messages' => $this->flash->getMessages(),
             'session' => $this->session
         ];
 

@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,8 @@ use Jenang2\IoC\IoC;
 use Jenang2\Event\MiddlewareBeforeResponseEvent;
 use Jenang2\Event\MiddlewareAfterResponseEvent;
 
-define('ROOT_DIR', dirname(__DIR__));
+define('APP_DIR', dirname(__DIR__));
+define('JENANG2_DIR', dirname(dirname(__DIR__)) . '/jenang2');
 
 // session
 $session = new Session();
@@ -24,33 +25,21 @@ if (!$session->isStarted()) {
 
 // load .env file
 $dotenv = new Dotenv();
-$dotenv->load(ROOT_DIR . '/.env');
+$dotenv->load(APP_DIR . '/.env');
 
 // register session to ioc
 IoC::register('session', function() use ($session) {
     return $session;
 });
 
+IoC::register('template_dirs', function() {
+    return [
+        APP_DIR . '/App/View',
+        JENANG2_DIR . '/Jenang2/View'
+    ];
+});
+
 $request = Request::createFromGlobals();
-
-// Mail Server
-// Create the Transport
-$transport = (new Swift_SmtpTransport('smtp.example.org', 25))
-  ->setUsername('your username')
-  ->setPassword('your password')
-;
-
-// Create the Mailer using your created Transport
-$mailer = new Swift_Mailer($transport);
-
-// Create a message
-$message = (new Swift_Message('Wonderful Subject'))
-  ->setFrom(['john@doe.com' => 'John Doe'])
-  ->setTo(['receiver@domain.org', 'other@domain.org' => 'A name'])
-  ->setBody('Here is the message itself');
-
-// Send the message
-// $result = $mailer->send($message);
 
 // defining Whoops
 $whoops = new Whoops\Run();
@@ -63,6 +52,7 @@ if ($development_mode == 'debug') {
 } elseif ($development_mode == 'production') {
     $handler = new \Jenang2\Handler\ProductionHandler();
     $exceptionControllers = array(
+        Response::HTTP_UNAUTHORIZED => new \Jenang2\Controller\UnauthorizedController($request),
         Response::HTTP_NOT_FOUND => new \Jenang2\Controller\NotFoundController($request),
         Response::HTTP_INTERNAL_SERVER_ERROR => new \Jenang2\Controller\ServerErrorController($request)
     );
@@ -100,13 +90,23 @@ if ($db_name) {
     $capsule->bootEloquent();
 }
 
-// use Core\RequestEvent;
-
 $app = new \Jenang2\Jenang2();
-require '../bootstrap/urls.php';
+$urls = [
+    '/' => 'App\Controller\HomeController',
+    '/about' => function() {
+        return new Response('This is the about page');
+    },
+    '/hello/{name}' => 'App\Controller\HelloController',
+    '/admin' => function() {
+        return new Response('This is the admin page');
+    }
+];
 $app->map($urls);
 
-require '../bootstrap/middlewares.php';
+$middlewares = [
+    'Jenang2\Middleware\CSRFTokenMiddleware'
+];
+
 $app->on('beforeResponse', function(MiddlewareBeforeResponseEvent $event) use ($middlewares) {
     $request = $event->getRequest();
 

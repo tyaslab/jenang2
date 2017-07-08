@@ -29,6 +29,9 @@ For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
 
 Still incomplete, though.
 
+- Model layer (ongoing)
 - Forms and Validations (plan: adapt from Jenang 1)
-- Flash Message
-- Cache
+- Flash Message (ongoing)
+- Cache (for future)
+- Database Migration (plan: use Phinx)
+- Logger (plan: use Monolog)

@@ -1,8 +1,10 @@
-!.gitkeep
-/public/media
+/app/public/media/*
 /vendor
 /stashed
 *.sublime-*
 composer.lock
-/.env
-/cache
+/app/.env
+/app/cache/*
+!.gitkeep
+bower_components
+node_modules
