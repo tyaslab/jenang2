@@ -15,14 +15,14 @@ If your app has database fill DB_NAME in .env file
 
 To run your app,
     
-    php -S localhost:8080 -t public
+    php -S localhost:8080 -t app/public
 
 
 Or, if you use xampp and run from htdocs directory, you should change BASE_URL to fit yours.
 
 For example, if your htdocs is in 'c:\xampp\htdocs' then BASE_URL should be,
     
-    BASE_URL=/jenang2/public/
+    BASE_URL=/jenang2/app/public/
 
 
 # TODO
