@@ -43,19 +43,22 @@ class Jenang2 implements HttpKernelInterface {
 
             $base_url = getenv('BASE_URL');
 
-            // remove trailing slash
-            if ($base_url[count($base_url) - 1] == '/') {
-                $base_url = substr($base_url, 0, count($base_url) - 2);
+            if ($base_url) {
+                // remove trailing slash
+                if ($base_url[count($base_url) - 1] == '/') {
+                    $base_url = substr($base_url, 0, count($base_url) - 2);
+                }
+
+                if ($path_info == $base_url) {
+                    $path_info = '/';
+                } elseif ($base_url && substr($path_info, 0, count($base_url)) == $base_url) {
+                    $path_info = substr($path_info, count($base_url));
+                }
+
+                // when path info returns none, it should be /
+                if ($path_info == '') $path_info = '/';
             }
 
-            if ($path_info == $base_url) {
-                $path_info = '/';
-            } elseif ($base_url && substr($path_info, 0, count($base_url)) == $base_url) {
-                $path_info = substr($path_info, count($base_url));
-            }
-
-            // when path info returns none, it should be /
-            if ($path_info == '') $path_info = '/';
 
             $attributes = $matcher->match($path_info);
             $controller = $attributes['controller'];
