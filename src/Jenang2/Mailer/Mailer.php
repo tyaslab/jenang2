@@ -51,21 +51,21 @@ class Mailer {
     }
 
     public function setSmtpTransport($host, $port, $username, $password, $use_tls) {
-        $this->transport = (new Swift_SmtpTransport($host, $port))
+        $this->transport = (new \Swift_SmtpTransport($host, $port))
           ->setUsername($username)
           ->setPassword($password);
     }
 
     public function setSendmailTransport($param) {
-        $this->transport = new Swift_SendmailTransport('/usr/sbin/sendmail -bs');
+        $this->transport = new \Swift_SendmailTransport('/usr/sbin/sendmail -bs');
     }
 
     public function send($subject, $from, $to, $body, $content_type='text/html') {
         if (!$this->transport) throw new \Jenang2\MailerException("Transport not configured!");
 
-        $mailer = new Swift_Mailer($this->transport);
+        $mailer = new \Swift_Mailer($this->transport);
 
-        $message = (new Swift_Message($subject))
+        $message = (new \Swift_Message($subject))
             ->setFrom($from)
             ->setTo($to)
             ->setBody($body, $content_type);
